@@ -1,0 +1,12 @@
+.bar {
+  background-color: steelblue;
+  width: 20px;
+  border: 1px solid black;
+  display: inline-block;
+  margin-right: 2px;
+}
+
+.container {
+  width: 1000px;
+  height: 500px;
+}
