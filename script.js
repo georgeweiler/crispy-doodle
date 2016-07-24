@@ -1,4 +1,5 @@
-var dataset = [1,2,3,4,5,6,7];
+var dataset = [1];
+var pointData = [{x:0, y:0}]
 // var textData = ["we", "don't", "give", "a", "shit", "about", "koalas"]
 function randomColor() {
     var letters = '0123456789ABCDEF'.split('');
@@ -9,27 +10,29 @@ function randomColor() {
     return color;
 }
 
+
 var svg = d3.select('body')
 .append('svg')
-.attr("class", "container");
+.attr("class", "container")
+.on("mousemove", function() { 
+  curPos = d3.mouse(this); 
+  pointData = {
+    x : curPos[0],
+    y : curPos[1]
+  }
+  displayCircle()
+});
 
-svg.selectAll('text')
-.data(dataset)
-.enter()
-.append("text")
-.text(function(d){
-    return d
-  })
 
+function displayCircle() {
+  console.log(pointData)
+  svg.selectAll('circle')
+    .data(pointData)
+    .enter()
+    .append("circle")
+    .attr("r", 20)
+    // .attr("cx", function(d){return d.x})
+    // .attr("cy", function(d){return d.y})
+    .attr("fill", () => randomColor())
+}
 
-var circles = svg.selectAll('circle')
-  .data(dataset)
-  .enter()
-  .append("circle")
-  
-
-circles
-.attr("r", function(d){return d*5})
-.attr("cx", function(d,i){return i*75 + 50})
-.attr("cy", 50)
-.attr("fill", () => randomColor())
