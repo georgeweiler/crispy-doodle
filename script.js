@@ -36,17 +36,14 @@ dots.data(nodes)
   .attr('r', function(d){return d.r})
   .attr('fill', function(d){return d.fill})
 
-// var userRadius = function(){
-//   return 25
-// }
-var userRadius = 25;
+// Set initial radius of user
+var userRadius = 10;
 
+// Assign variable user to class user and set radius to userRadius
 var user = svg.select('.user')
     .attr('r', userRadius)
-    // .attr('cx', function(d){return d.cx})
-    // .attr('cy', function(d){return d.cy})
-    // .attr('fill', randomColor())
 
+// Get X, Y coordinates of cursor
 d3.select('svg').on("mousemove", function () {
   var userCoords = d3.mouse(this),
       uX = userCoords[0],
@@ -57,17 +54,23 @@ d3.select('svg').on("mousemove", function () {
     .attr('cx', uX)
     .attr('cy', uY);
 
-  var enemies = svg.selectAll('.enemy')
-  console.log(enemies[0].slice(0));
-  var enemiesOnly = enemies[0].slice(0);
-  enemiesOnly.forEach(function(enemy){
+  // Enemies refers to an array of all static edible objects
+  var enemies = svg.selectAll('.enemy')[0].slice(0);
+
+  // Prep for collisionCheck: loop through enemies and extract cX and cY
+  enemies.forEach(function(enemy){
     // console.log("enemy: " + enemy.cx.baseVal.value);
-    eX = enemy.cx.baseVal.value
-    eY = enemy.cy.baseVal.value
-    if(checkCollision(uX, uY, eX, eY, userRadius)){
-     enemy.remove();
-     userRadius += enemy.r.baseVal.value;
-     user.attr('r', userRadius)
+    eX = enemy.cx.baseVal.value;
+    eY = enemy.cy.baseVal.value;
+
+    if(checkCollision(uX, uY, eX, eY, userRadius)) {
+      // Remove enemy where collision check is true
+      enemy.remove();
+      // Increase userRadius upon collision by 1/2 the radius of enemy
+      userRadius += 0.5 * enemy.r.baseVal.value;
+      // Update user object with updated radius
+      user.attr('r', userRadius)
+      console.log("current user radius: ", user[0][0].r.baseVal.value);
     }
   })
  });
