@@ -10,47 +10,84 @@ function randomColor() {
 var h = 1000
 var w = 1000
 
-
-var enemyNodes = d3.range(500).map(function() { 
+var enemyNodes = d3.range(10).map(function() { 
   return {
-    r: Math.random()*40,
-    cx: Math.random() * w,
-    cy: Math.random() * h
+    r: 7,
+    cx: Math.random() * h,
+    cy: Math.random() * w,
+    fill: randomColor()
   }; 
 })
-
-// enemyNodes = [{r:20},{r:20},{r:20},{r:20},{r:20}, ... ]
 
 var svg = d3.select('body').append('svg')
   .attr('height', h)
   .attr('width', w)
 
-var enemies = svg.selectAll('circle');
+var enemies = svg.selectAll('circle')
 
 enemies.data(enemyNodes)
   .enter()
   .append('circle')
+  .attr('class', function(d,i){
+    return i == 0 ? "user" : "enemy"
+  })
   .attr('cx', function(d){return d.cx})
   .attr('cy', function(d){return d.cy})
   .attr('r', function(d){return d.r})
-  .attr('fill', randomColor())
+  .attr('fill', function(d){return d.fill})
 
 
-var circle = svg.selectAll('circle');
-circle.data([100])
-  .enter()
-    .append('circle')
-    .attr('cx', 200)
-    .attr('cy', 200)
-    .attr('r', 30)
+var user = svg.select('.user')
+    .attr('r', 100)
+    .attr('cx', function(d){return d.cx})
+    .attr('cy', function(d){return d.cy})
     .attr('fill', randomColor())
 
 d3.select('svg').on("mousemove", function () {
-  var circles = d3.selectAll('circle')
-  var coords = d3.mouse(this);
-
-  circles.transition()
+  var userCoords = d3.mouse(this);
+  user.transition()
   .duration(2000).ease('linear')
-    .attr('cx', coords[0])
-    .attr('cy', coords[1]);
+    .attr('cx', userCoords[0])
+    .attr('cy', userCoords[1]);
+
+  circumference(userCoords)
  });
+
+function circumference(coords){
+  var circumferencePoint
+  var i = 361
+  function loop(i){
+    for(i; i<360; i++){
+      var circumferenceCoords =
+      { 
+        x : coords[0] + 5 * Math.cos(i),
+        y : coords[1] + 5 * Math.sin(i)
+      }
+      console.log(circumferenceCoords) 
+    }
+  }
+  if(i>360){
+    loop(0)
+  }
+}
+
+
+
+    //loop 1 -> 360
+      //{ 
+        //x : originX + originR * cos(i)
+        //y : originY + originR * sin(i)
+      //} 
+
+
+  //if user's pos === circle pos
+    //delete circle
+    //increate user size
+
+
+
+
+
+
+
+
