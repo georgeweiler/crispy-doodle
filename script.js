@@ -14,7 +14,7 @@ var svg = d3.select('body').append('svg')
   .attr('height', h)
   .attr('width', w)
 
-var nodes = d3.range(2).map(function() {
+var nodes = d3.range(10).map(function() {
   return {
     r: Math.random() * 15 + 5,
     cx: 0,
@@ -23,74 +23,49 @@ var nodes = d3.range(2).map(function() {
     // transition: randomPosition()
   };
 })
+
+//////////////////////////////////////////////////
+////////// Random Enemies
+//////////////////////////////////////////////////
+svg.selectAll('circle')
+  .data([100])
+  .enter()
+  .append('circle')
+  .attr('class', 'user')
+  .attr('fill', 'red')
+  .attr('r', 50)
+
+
 var dots = svg.selectAll('circle')
-dots.data(nodes)
-  .enter()
-  .append('circle')
-  .attr('class', function(d,i){
-    return i == 0 ? "user" : "enemy"
-  })
-  .attr('cx', function(d){return d.cx})
-  .attr('cy', function(d){return d.cy})
-  .attr('r', function(d){return d.r})
-  .attr('fill', function(d){return d.fill})
-  .transition()
-    .duration(10000).ease('linear')
-    .attr('cx', w)
-    // .attr('cy', function(d) {return d.transition.y})
-    .remove()
-    // .delete()
-
-function doSomething() {
-    nodes.push({
-    r: Math.random() * 15 + 5,
-    cx: 0,
-    cy: Math.random() * w,
-    fill: randomColor()
-    // transition: randomPosition()
-  })
-
-dots = svg.selectAll('circle')
-dots.data(nodes)
-  .enter()
-  .append('circle')
-  .attr('class', function(d,i){
-    return i == 0 ? "user" : "enemy"
-  })
-  .attr('cx', function(d){return d.cx})
-  .attr('cy', function(d){return d.cy})
-  .attr('r', function(d){return d.r})
-  .attr('fill', function(d){return d.fill})
-  .transition()
-    .duration(10000).ease('linear')
-    .attr('cx', w)
-    // .attr('cy', function(d) {return d.transition.y})
-    .remove()
+getSides = function(){
+  sides = {}
+  var choice = Math.random(); 
+  if(choice > 0.5){
+    sides.start = 0
+    sides.end = w
+  }
+  else {
+    sides.start = w
+    sides.end = 0
+  }
+  return sides
 }
-
-(function loop() {
-    var rand = Math.round(Math.random() * (3000 - 500)) + 500;
-    setTimeout(function() {
-            doSomething();
-            loop();  
-    }, rand);
-}());
-
-
-
-// function randomPosition() {
-//   return {x: Math.random() * w, y: Math.random() * h};
-// }
-
-
-
-// function randomTransition() {
-//   var dots = svg.selectAll('enemies')
-//   dots.transition()
-//     .duration(100000).ease('linear')
-//     .attr('cx', function(d) {return d.transition.x})
-//     .attr('cy', function(d) {return d.transition.y});
-// }
+setInterval(function(){
+  var sides = getSides()
+  dots
+  .data(nodes)
+  .enter()
+  .append('circle')
+  .attr('class', "enemy")
+  .attr('cx', sides.start)
+  .attr('cy', Math.random()*h)
+  .attr('r', Math.random()*60)
+  .attr('fill', randomColor()) 
+  .transition().ease('linear')
+    .duration(Math.random()*5000 + 2000)
+    .attr('cx', sides.end)
+    .remove()
+}, 1000)  
 
 // Set initial radius of user
 var userRadius = 10;
@@ -101,10 +76,11 @@ var user = svg.select('.user')
 
 // Get X, Y coordinates of cursor
 d3.select('svg').on("mousemove", function () {
+  
   var userCoords = d3.mouse(this),
       uX = userCoords[0],
       uY = userCoords[1]
-
+  // console.log(userCoords)
   user.transition()
   .duration(5).ease('linear')
     .attr('cx', uX)
@@ -142,8 +118,3 @@ d3.select('svg').on("mousemove", function () {
 function checkCollision(uX, uY, eX, eY, r){
   return Math.pow((uX - eX),2) + Math.pow((uY - eY),2) < Math.pow(r, 2)
 }
-
-
-// Next steps
-  // Have user circle follow a path
-  // Collision check does not fire until circle is there
