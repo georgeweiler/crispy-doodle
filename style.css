@@ -6,7 +6,14 @@
   margin-right: 2px;
 }
 
-.container {
+/*.container {
   width: 1000px;
   height: 500px;
+}*/
+
+.line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+  stroke-dasharray: 2,5;
 }
