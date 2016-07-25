@@ -36,12 +36,13 @@ dots.data(nodes)
   .attr('r', function(d){return d.r})
   .attr('fill', function(d){return d.fill})
 
-var userRadius = function(){
-  return 25
-}
+// var userRadius = function(){
+//   return 25
+// }
+var userRadius = 25;
 
 var user = svg.select('.user')
-    .attr('r', userRadius())
+    .attr('r', userRadius)
     // .attr('cx', function(d){return d.cx})
     // .attr('cy', function(d){return d.cy})
     // .attr('fill', randomColor())
@@ -63,8 +64,10 @@ d3.select('svg').on("mousemove", function () {
     // console.log("enemy: " + enemy.cx.baseVal.value);
     eX = enemy.cx.baseVal.value
     eY = enemy.cy.baseVal.value
-    if(checkCollision(uX, uY, eX, eY, userRadius())){
+    if(checkCollision(uX, uY, eX, eY, userRadius)){
      enemy.remove();
+     userRadius += enemy.r.baseVal.value;
+     user.attr('r', userRadius)
     }
   })
  });
