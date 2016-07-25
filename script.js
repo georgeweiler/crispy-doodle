@@ -10,9 +10,9 @@ function randomColor() {
 var h = 1000
 var w = 1000
 
-var enemyNodes = d3.range(10).map(function() { 
+var nodes = d3.range(3).map(function() { 
   return {
-    r: 7,
+    r: 20,
     cx: Math.random() * h,
     cy: Math.random() * w,
     fill: randomColor()
@@ -23,9 +23,9 @@ var svg = d3.select('body').append('svg')
   .attr('height', h)
   .attr('width', w)
 
-var enemies = svg.selectAll('circle')
+var dots = svg.selectAll('circle')
 
-enemies.data(enemyNodes)
+dots.data(nodes)
   .enter()
   .append('circle')
   .attr('class', function(d,i){
@@ -36,53 +36,40 @@ enemies.data(enemyNodes)
   .attr('r', function(d){return d.r})
   .attr('fill', function(d){return d.fill})
 
-
-var user = svg.select('.user')
-    .attr('r', 100)
-    .attr('cx', function(d){return d.cx})
-    .attr('cy', function(d){return d.cy})
-    .attr('fill', randomColor())
-
-d3.select('svg').on("mousemove", function () {
-  var userCoords = d3.mouse(this);
-  user.transition()
-  .duration(2000).ease('linear')
-    .attr('cx', userCoords[0])
-    .attr('cy', userCoords[1]);
-
-  circumference(userCoords)
- });
-
-function circumference(coords){
-  var circumferencePoint
-  var i = 361
-  function loop(i){
-    for(i; i<360; i++){
-      var circumferenceCoords =
-      { 
-        x : coords[0] + 5 * Math.cos(i),
-        y : coords[1] + 5 * Math.sin(i)
-      }
-      console.log(circumferenceCoords) 
-    }
-  }
-  if(i>360){
-    loop(0)
-  }
+var userRadius = function(){
+  return 50
 }
 
+var user = svg.select('.user')
+    .attr('r', userRadius())
+    // .attr('cx', function(d){return d.cx})
+    // .attr('cy', function(d){return d.cy})
+    // .attr('fill', randomColor())
 
+d3.select('svg').on("mousemove", function () { 
+  var userCoords = d3.mouse(this),
+      uX = userCoords[0],
+      uY = userCoords[1]
+ 
+  user.transition()
+  .duration(5).ease('linear')
+    .attr('cx', uX)
+    .attr('cy', uY);
 
-    //loop 1 -> 360
-      //{ 
-        //x : originX + originR * cos(i)
-        //y : originY + originR * sin(i)
-      //} 
+  var enemies = svg.selectAll('.enemy')
+  enemies[0].forEach(function(enemy){
+    eX = enemy.cx
+    eY = enemy.cy
+    if(checkCollision(uX, uY, eX, eY, userRadius())){
+     console.log("COLISION!")
+     // enemies.exit().remove()
+    } 
+  })
+ });
 
-
-  //if user's pos === circle pos
-    //delete circle
-    //increate user size
+function checkCollision(uX, uY, eX, eY, r){
+  return Math.pow((uX - eX),2) + Math.pow((uY - eY),2)  < Math.pow(r, 2)  
+}
 
 
 
