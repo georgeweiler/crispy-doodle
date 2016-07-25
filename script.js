@@ -1,8 +1,3 @@
-var dataset = [10, 20, 30];
-var ptData = [];
-var npoints = 1;
-
-// var textData = ["we", "don't", "give", "a", "shit", "about", "koalas"]
 function randomColor() {
     var letters = '0123456789ABCDEF'.split('');
     var color = '#';
@@ -12,96 +7,50 @@ function randomColor() {
     return color;
 }
 
-// var coordinates = [0, 0];
-// coordinates = d3.mouse();
-// var x = coordinates[0];
-// var y = coordinates[1];
-//
-// console.log(coordinates);
+var h = 1000
+var w = 1000
 
+
+var enemyNodes = d3.range(500).map(function() { 
+  return {
+    r: Math.random()*40,
+    cx: Math.random() * w,
+    cy: Math.random() * h
+  }; 
+})
+
+// enemyNodes = [{r:20},{r:20},{r:20},{r:20},{r:20}, ... ]
 
 var svg = d3.select('body').append('svg')
-  .attr("width", 1000)
-  .attr("height", 1000);
-  // .append('g');
+  .attr('height', h)
+  .attr('width', w)
 
-var circle = svg.append('circle')
-  .attr('cx', 25)
-  .attr('cy', 25)
-  .attr('r', 25)
-  .style('fill', 'purple');
+var enemies = svg.selectAll('circle');
 
-// var line = d3.svg.circle()
-//   .x(function(d, i) { return d[0]; })
-//   .y(function(d, i) { return d[1]; });
-//
-
-svg.on('mousemove', function() {
-  circle
-    .attr('opacity', 1)
-    .attr('cx', d3.mouse(this)[0] )
-    .attr('cy', d3.mouse(this)[1] );
-  });
-// svg.select('svg').append('circle')
-//   .on('mousemove', functi8on() {
-//     alert("hello");
-//   });
-
-// var svgagain = d3.select('body').select('svg')
-//   .on('mousemove', function() {
-//     var pt = d3.mouse(this);
-//
-//     var newData = {
-//       x: Math.round( xScale.invert(coords[0])),  // Takes the pixel number to convert to number
-//       y: Math.round( yScale.invert(coords[1]))
-//     };
-//
-//     dataset.push(newData);
-//
-//     svg.selectAll('circle')
-//       .data(dataset)
-//       .enter()
-//       .append('circle')
-//       .attr(circleAttrs)
-//       .on('mouseover', handleMouseOver)
-//       .on('mouseout', handleMouseOut);
-//     })
-//
-// var path = svg.append('g')
-//   .append('path')
-//     .data([ptData])
-//     .attr('class', 'line')
-//     .attr('d', line);
-//
-// function tick(pt) {
-//   ptData.push(pt);
-//   path.attr('d', function(d) {return line(d);})
-//
-//   if(ptData.length > npoints) {
-//     ptData.shift();
-//   }
-// }
-// var svg = d3.select('body')
-//   .append('svg')
-//   .attr("class", "container")
-//   .on("mousemove", function() {
-//     curPos = d3.mouse(this);
-//     ptData = {
-//       x : curPos[0],
-//       y : curPos[1]
-//     }
-//     // displayCircle()
-//   });
+enemies.data(enemyNodes)
+  .enter()
+  .append('circle')
+  .attr('cx', function(d){return d.cx})
+  .attr('cy', function(d){return d.cy})
+  .attr('r', function(d){return d.r})
+  .attr('fill', randomColor())
 
 
-// function displayCircle() {
-//   console.log(ptData)
-//   svg.selectAll('circle')
-//     .data(ptData)
-//     .enter()
-//     .append("circle")
-//     .attr("r", 20)
-//     .attr("cx", function(d){return d.x})
-//     .attr("cy", function(d){return d.y})
-//     .attr("fill", () => randomColor())
-// }
+var circle = svg.selectAll('circle');
+circle.data([100])
+  .enter()
+    .append('circle')
+    .attr('cx', 200)
+    .attr('cy', 200)
+    .attr('r', 30)
+    .attr('fill', randomColor())
+
+d3.select('svg').on("mousemove", function () {
+  var circles = d3.selectAll('circle')
+  var coords = d3.mouse(this);
+
+  circles.transition()
+  .duration(2000).ease('linear')
+    .attr('cx', coords[0])
+    .attr('cy', coords[1]);
+ });
