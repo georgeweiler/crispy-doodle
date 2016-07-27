@@ -16,7 +16,7 @@ var svg = d3.select('body').append('svg')
 
 var nodes = d3.range(10).map(function() {
   return {
-    r: Math.random() * 15 + 5,
+    r: Math.random() * 60 + 5,
     cx: 0,
     cy: Math.random() * w,
     fill: randomColor()
@@ -25,7 +25,7 @@ var nodes = d3.range(10).map(function() {
 })
 
 //////////////////////////////////////////////////
-////////// Random Enemies
+////// User Instantiation
 //////////////////////////////////////////////////
 svg.selectAll('circle')
   .data([100])
@@ -35,7 +35,12 @@ svg.selectAll('circle')
   .attr('fill', 'red')
   .attr('r', 50)
 
+//////////////////////////////////////////////////
+////// Enemy Creation
+//////////////////////////////////////////////////
 var dots = svg.selectAll('circle')
+
+  //randomize which side the enemies come from
 getSides = function(){
   sides = {}
   var choice = Math.random();
@@ -49,6 +54,7 @@ getSides = function(){
   }
   return sides
 }
+
 setInterval(function(){
   var sides = getSides()
   dots
@@ -66,9 +72,13 @@ setInterval(function(){
     .remove()
 }, 1000)
 
+
+//////////////////////////////////////////////////
+////// User Movement & Functionality
+//////////////////////////////////////////////////
+
 // Set initial radius of user
 var userRadius = 10;
-
 // Assign variable user to class user and set radius to userRadius
 var user = svg.select('.user')
     .attr('r', userRadius)
@@ -95,11 +105,10 @@ d3.select('svg').on("mousemove", function () {
     eY = enemy.cy.baseVal.value;
 
     if(checkCollision(uX, uY, eX, eY, userRadius)) {
-      var safeBound = 1.5;
-        // User smaller than (enemy - safeBound)
+      var safeBound = 0;
+      // If smaller than enemy, you lose
       if(userRadius < enemy.r.baseVal.value - safeBound) {
-        // User gets eaten
-        alert("you lose")
+        svg.remove()
       }
       // User bigger than (enemy + safeBound)
       if(userRadius > enemy.r.baseVal.value + safeBound) {
