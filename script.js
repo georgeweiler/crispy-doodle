@@ -39,11 +39,11 @@ svg.selectAll('circle')
 ////// Enemy Creation
 //////////////////////////////////////////////////
 var dots = svg.selectAll('circle')
-  
+
   //randomize which side the enemies come from
 getSides = function(){
   sides = {}
-  var choice = Math.random(); 
+  var choice = Math.random();
   if(choice > 0.5){
     sides.start = 0
     sides.end = w
@@ -64,13 +64,13 @@ setInterval(function(){
   .attr('class', "enemy")
   .attr('cx', sides.start)
   .attr('cy', Math.random()*h)
-  .attr('r', Math.random()*150)
-  .attr('fill', randomColor()) 
+  .attr('r', Math.random()*60)
+  .attr('fill', randomColor())
   .transition().ease('linear')
     .duration(Math.random()*5000 + 2000)
     .attr('cx', sides.end)
     .remove()
-}, 1000)  
+}, 1000)
 
 
 //////////////////////////////////////////////////
@@ -85,7 +85,7 @@ var user = svg.select('.user')
 
 // Get X, Y coordinates of cursor
 d3.select('svg').on("mousemove", function () {
-  
+
   var userCoords = d3.mouse(this),
       uX = userCoords[0],
       uY = userCoords[1]
@@ -105,18 +105,17 @@ d3.select('svg').on("mousemove", function () {
     eY = enemy.cy.baseVal.value;
 
     if(checkCollision(uX, uY, eX, eY, userRadius)) {
+      var safeBound = 0;
       // If smaller than enemy, you lose
-      if(userRadius < enemy.r.baseVal.value) {
-          svg.remove()
-          
+      if(userRadius < enemy.r.baseVal.value - safeBound) {
+        svg.remove()
       }
-      // Else eat enemy
-      else {
+      // User bigger than (enemy + safeBound)
+      if(userRadius > enemy.r.baseVal.value + safeBound) {
         // Remove enemy where collision check is true
-        
         enemy.remove();
-        // Increase userRadius upon collision by 1/5 the radius of enemy
-        userRadius += 0.33
+        // Increase userRadius upon successful collision by 1/3
+        userRadius += 1/3
         // Update user object with updated radius
         user.attr('r', userRadius)
         console.log("current user radius: ", user[0][0].r.baseVal.value);
